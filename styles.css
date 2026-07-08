@@ -3,6 +3,41 @@
    Design tokens, layout, components, responsive layer.
    ============================================================ */
 
+/* Self-hosted fonts (latin subset). Inter Tight and JetBrains Mono are
+   variable fonts — one file covers the whole weight range. */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(assets/fonts/inter-tight-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/fonts/instrument-serif-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/fonts/instrument-serif-italic-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url(assets/fonts/jetbrains-mono-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   --bg: #FAF7F2;
   --bg-soft: #F2EEE6;
@@ -42,6 +77,12 @@ a:hover { opacity: 0.7; }
   50%      { transform: translateY(-8px); }
 }
 
+/* !important needed: the animation is applied via inline style */
+@media (prefers-reduced-motion: reduce) {
+  .float-pin { animation: none !important; }
+  .faq-a, .faq-toggle { transition: none; }
+}
+
 .serif {
   font-family: var(--font-serif);
   font-style: italic;
@@ -75,6 +116,7 @@ a:hover { opacity: 0.7; }
   color: var(--ink-2);
 }
 .nav-links a { text-decoration: none; transition: color 0.15s ease; }
+.nav-links a[aria-current="page"] { color: var(--ink); font-weight: 500; }
 .nav-cta {
   background: var(--ink);
   color: var(--bg);
@@ -530,7 +572,8 @@ a:hover { opacity: 0.7; }
   max-height: 0; overflow: hidden;
   transition: max-height 0.3s ease, padding 0.3s ease;
 }
-.faq-item.open .faq-a { padding-bottom: 22px; max-height: 320px; }
+/* Cap must comfortably exceed the longest answer at 200% zoom / narrow widths */
+.faq-item.open .faq-a { padding-bottom: 22px; max-height: 600px; }
 
 /* ── Footer CTA ────────────────────────────── */
 .footer-cta {
@@ -626,6 +669,15 @@ a:hover { opacity: 0.7; }
   .grid-2 { grid-template-columns: 1fr; gap: 16px; }
   .step-card { min-height: auto; padding: 24px; }
   .feature-tile { min-height: auto; padding: 22px; }
+  /* .shot-wrap's only child is absolutely positioned; without the tile's
+     min-height it collapses to 0 and hides the screenshot */
+  .shot-wrap { min-height: 300px; }
+
+  /* Inline percentage offsets push the callouts off-screen in the
+     single-column layout — pin them inside the phone wrap instead */
+  .input-callout-type { top: 0 !important; left: 0 !important; }
+  .input-callout-instagram { top: 42% !important; right: 0 !important; }
+  .input-callout-tiktok { bottom: 0 !important; left: 0 !important; }
 
   .faq-grid { grid-template-columns: 1fr; gap: 32px; }
 
@@ -639,4 +691,11 @@ a:hover { opacity: 0.7; }
   .hero h1 { font-size: 36px; }
   .category-grid { grid-template-columns: repeat(3, 1fr); }
   .input-callout-tiktok { display: none; }
+  /* The phone's inline 340px width overflows 320-360px viewports;
+     scale it down while keeping the frame's aspect ratio */
+  .phone {
+    width: min(340px, calc(100vw - 48px)) !important;
+    height: auto !important;
+    aspect-ratio: 340 / 717;
+  }
 }
